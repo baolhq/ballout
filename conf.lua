@@ -1,0 +1,7 @@
+local consts = require("src/consts/consts")
+
+-- Setup initial stuff
+function love.conf(t)
+    t.window.width = consts.WINDOW_WIDTH
+    t.window.height = consts.WINDOW_HEIGHT
+end
