@@ -1,3 +1,5 @@
+local ball = require("src/models/ball")
+
 local collider = {
     queued = {},  -- Queued callback events
     screen = nil, -- Reference to main screen
@@ -14,6 +16,7 @@ function collider:handleBallBrick(ball, brick)
         brick.shouldRemove = true
 
         if self.screen then
+            ball.speed = ball.speed + 20
             self.screen.score = self.screen.score + 1
         end
     end)

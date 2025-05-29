@@ -5,7 +5,8 @@ local ball = {
     width = 24,
     height = 24,
     radius = 12,
-    speed = 400,
+    speed = 0,
+    sprite = {},
     body = {},
     shape = {},
     fixture = {},
@@ -13,6 +14,7 @@ local ball = {
 
 -- Initialize ball position, body and angle
 function ball:init(world)
+    self.speed = 400
     local screenW, screenH = love.graphics.getDimensions()
     local x = (screenW - self.width) / 2 + self.width / 2
     local y = screenH / 2 - self.height / 2
@@ -24,8 +26,11 @@ function ball:init(world)
     self.fixture:setFriction(0)
     self.fixture:setUserData({ type = "ball", obj = self })
 
+    -- Load ball sprite
+    self.sprite = love.graphics.newImage("res/img/ball.png")
+    self.sprite:setFilter("linear", "linear", 64)
 
-    -- Setup initial fall angle
+    -- Setup initial angle
     local angle = math.rad(love.math.random(45, 135))
     local vx = math.cos(angle)
     local vy = math.sin(angle)
@@ -53,8 +58,12 @@ end
 -- Draw ball to screen
 function ball:draw()
     love.graphics.setColor(colors.BALL)
+
     local x, y = self.body:getPosition()
-    love.graphics.circle("fill", x, y, self.radius)
+    local originX = self.width / 2  -- half of sprite width
+    local originY = self.height / 2 -- half of sprite height
+
+    love.graphics.draw(self.sprite, x, y, 0, 1, 1, originX, originY)
 end
 
 return ball

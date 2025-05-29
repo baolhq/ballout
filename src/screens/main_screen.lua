@@ -46,6 +46,9 @@ function mainScreen:load(assets, actions)
     paddle:init(self.world)
     ball:init(self.world)
 
+    -- Load brick sprites here to reduce loads
+    local brickSprite = love.graphics.newImage("res/img/brick.png")
+
     -- Create a pool of bricks
     local spacingX, spacingY = 10, 10
     local rows, cols = 5, 10
@@ -58,7 +61,7 @@ function mainScreen:load(assets, actions)
         for col = 1, cols do
             local x = xOffset + (col - 1) * (brick.width + spacingX) + brick.width / 2
             local y = yOsset + (row - 1) * (brick.height + spacingY) + brick.height / 2
-            local b = brick.new(self.world, x, y)
+            local b = brick.new(self.world, x, y, brickSprite)
             table.insert(self.bricks, b)
         end
     end

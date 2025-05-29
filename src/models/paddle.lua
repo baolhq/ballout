@@ -8,6 +8,7 @@ local paddle = {
     body = {},
     shape = {},
     fixture = {},
+    sprite = {},
 }
 
 -- Initialize the paddle, setup its physics body
@@ -20,6 +21,9 @@ function paddle:init(world)
     self.shape = love.physics.newRectangleShape(self.width, self.height)
     self.fixture = love.physics.newFixture(self.body, self.shape)
     self.fixture:setUserData({ type = "paddle", obj = self })
+
+    -- Load paddle sprite
+    self.sprite = love.graphics.newImage("res/img/paddle.png")
 end
 
 -- Move the paddle with provided horizontal direction from `-1` to `1` <br/>
@@ -48,18 +52,15 @@ function paddle:move(direction)
     end
 end
 
--- Draw the paddle based on its physics position
+-- Draw the paddle
 function paddle:draw()
     love.graphics.setColor(colors.PADDLE)
+
     local x, y = self.body:getPosition()
-    love.graphics.rectangle(
-        "fill",
-        x - self.width / 2,
-        y - self.height / 2,
-        self.width,
-        self.height,
-        2, 2
-    )
+    local originX = self.width / 2
+    local originY = self.height / 2
+
+    love.graphics.draw(self.sprite, x, y, 0, 1, 1, originX, originY)
 end
 
 return paddle
