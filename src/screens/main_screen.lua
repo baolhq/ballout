@@ -1,25 +1,134 @@
-local mainScreen = {
+local colors = require("src/consts/colors")
+local consts = require("src/consts/consts")
+local paddle = require("src/models/paddle")
+local ball = require("src/models/ball")
+local brick = require("src/models/brick")
+local collider = require("src/utils/collider")
 
+local mainScreen = {
+    assets = {},
+    actions = {},
+    world = {},
+    bricks = {},
 }
 
-function mainScreen:load()
+local function initBoundaries(world)
+    local topBound = {}
+    topBound.body = love.physics.newBody(world, consts.WINDOW_WIDTH / 2, 5, "static")
+    topBound.shape = love.physics.newRectangleShape(consts.WINDOW_WIDTH, 1)
+    topBound.fixture = love.physics.newFixture(topBound.body, topBound.shape)
+    topBound.fixture:setUserData({ type = "boundary", name = "top" })
 
+    local leftBound = {}
+    leftBound.body = love.physics.newBody(world, 5, consts.WINDOW_HEIGHT / 2, "static")
+    leftBound.shape = love.physics.newRectangleShape(1, consts.WINDOW_HEIGHT)
+    leftBound.fixture = love.physics.newFixture(leftBound.body, leftBound.shape)
+    leftBound.fixture:setUserData({ type = "boundary", name = "left" })
+
+    local rightBound = {}
+    rightBound.body = love.physics.newBody(world, consts.WINDOW_WIDTH - 5, consts.WINDOW_HEIGHT / 2, "static")
+    rightBound.shape = love.physics.newRectangleShape(1, consts.WINDOW_HEIGHT)
+    rightBound.fixture = love.physics.newFixture(rightBound.body, rightBound.shape)
+    rightBound.fixture:setUserData({ type = "boundary", name = "right" })
+end
+
+function mainScreen:load(assets, actions)
+    self.assets = assets
+    self.actions = actions
+    self.world = love.physics.newWorld(0, 0, true)
+
+    -- Set collision handlers
+    self.world:setCallbacks(function(a, b)
+        collider:beginContact(a, b)
+    end, function() end)
+
+    paddle:init(self.world)
+    ball:init(self.world)
+    initBoundaries(self.world)
+
+    -- Create a pool of bricks
+    local spacingX, spacingY = 10, 10
+    local rows, cols = 5, 10
+    local totalGridW = cols * brick.width + (cols - 1) * spacingX
+
+    local xOffset = (love.graphics.getWidth() - totalGridW) / 2
+    local yOsset = 36
+
+    for row = 1, rows do
+        for col = 1, cols do
+            local x = xOffset + (col - 1) * (brick.width + spacingX) + brick.width / 2
+            local y = yOsset + (row - 1) * (brick.height + spacingY) + brick.height / 2
+            local b = brick.init(self.world, x, y)
+            table.insert(self.bricks, b)
+        end
+    end
+end
+
+function mainScreen:unload()
+    -- Destroy paddle and ball
+    if paddle.destroy then paddle:destroy() end
+    if ball.destroy then ball:destroy() end
+
+    -- Destroy bricks
+    for _, b in ipairs(self.bricks) do
+        if b.body and b.body:destroy() then
+            b.body:destroy()
+        end
+    end
+    self.bricks = {}
+
+    -- Destroy world
+    if self.world and self.world:destroy() then
+        self.world:destroy()
+    end
+    self.world = nil
 end
 
 function mainScreen:keypressed(key)
-
+    if key == "escape" then
+        self:unload()
+        self.actions.switchScreen("title")
+        return
+    end
 end
 
 function mainScreen:mousepressed(x, y, btn)
 
 end
 
-function mainScreen:update(dt)
+local function gameOver()
+    print("Game Over")
+end
 
+function mainScreen:update(dt)
+    self.world:update(dt)
+
+    local direction = 0
+    if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
+        direction = direction - 1
+    elseif love.keyboard.isDown("right") or love.keyboard.isDown("d") then
+        direction = direction + 1
+    end
+
+    paddle:move(direction)
+
+    collider:flush()
+    for i = #self.bricks, 1, -1 do
+        if self.bricks[i].shouldRemove then
+            table.remove(self.bricks, i)
+        end
+    end
 end
 
 function mainScreen:draw()
+    love.graphics.clear(colors.BG)
 
+    paddle:draw()
+    ball:draw()
+
+    for _, v in ipairs(self.bricks) do
+        brick.draw(v)
+    end
 end
 
 return mainScreen

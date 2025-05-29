@@ -1,0 +1,65 @@
+local consts = require("src/consts/consts")
+local colors = require("src/consts/colors")
+
+local paddle = {
+    width = 200,
+    height = 20,
+    speed = 600,
+    body = {},
+    shape = {},
+    fixture = {},
+}
+
+-- Initialize the paddle, setup its physics body
+function paddle:init(world)
+    local screenW, screenH = love.graphics.getDimensions()
+    local x = (screenW - self.width) / 2 + self.width / 2
+    local y = screenH - self.height / 2 - 48
+
+    self.body = love.physics.newBody(world, x, y, "kinematic")
+    self.shape = love.physics.newRectangleShape(self.width, self.height)
+    self.fixture = love.physics.newFixture(self.body, self.shape)
+    self.fixture:setUserData({ type = "paddle", obj = self })
+end
+
+-- Move the paddle with provided horizontal direction from `-1` to `1` <br/>
+-- Clamp it position into screen boundaries
+function paddle:move(direction)
+    local vx = 0
+
+    if direction ~= 0 then
+        vx = direction * self.speed
+    end
+
+    self.body:setLinearVelocity(vx, 0)
+
+    -- Clamp to screen boundaries
+    local x, y = self.body:getPosition()
+    local halfWidth = self.width / 2
+
+    if x - halfWidth < 0 then
+        self.body:setPosition(halfWidth, y)
+        self.body:setLinearVelocity(0, 0)
+    end
+
+    if x + halfWidth > consts.WINDOW_WIDTH then
+        self.body:setPosition(consts.WINDOW_WIDTH - halfWidth, y)
+        self.body:setLinearVelocity(0, 0)
+    end
+end
+
+-- Draw the paddle based on its physics position
+function paddle:draw()
+    love.graphics.setColor(colors.PADDLE)
+    local x, y = self.body:getPosition()
+    love.graphics.rectangle(
+        "fill",
+        x - self.width / 2,
+        y - self.height / 2,
+        self.width,
+        self.height,
+        2, 2
+    )
+end
+
+return paddle
