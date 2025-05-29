@@ -38,8 +38,8 @@ function mainScreen:load(assets, actions)
     self.world = love.physics.newWorld(0, 0, true)
 
     -- Set collision handlers
-    self.world:setCallbacks(function(a, b)
-        collider:beginContact(a, b)
+    self.world:setCallbacks(function(a, b, coll)
+        collider:beginContact(a, b, coll)
     end, function() end)
 
     paddle:init(self.world)

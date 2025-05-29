@@ -1,3 +1,5 @@
+local vector = require("src/utils/vector")
+
 local collider = {
     queued = {}, -- Queued callback events
 }
@@ -11,10 +13,20 @@ function collider:handleBallPaddle(ball, paddle)
     end)
 end
 
-function collider:handleBallBrick(ball, brick)
+function collider:handleBallBrick(ball, brick, contact)
     table.insert(self.queued, function()
         local vx, vy = ball.body:getLinearVelocity()
-        ball:setVelocity(-vx, -vy)
+
+        -- Get normal from contact (points from brick to ball)
+        local nx, ny = contact:getNormal()
+
+        -- Reflect velocity using normal
+        local rx, ry = vector.reflect(vx, vy, nx, ny)
+
+        -- Set velocity with normalized direction * ball speed
+        local nx2, ny2 = vector.normalize(rx, ry)
+        ball.body:setLinearVelocity(nx2 * ball.speed, ny2 * ball.speed)
+
         brick.fixture:destroy()
         brick.body:destroy()
         brick.shouldRemove = true
@@ -26,23 +38,32 @@ function collider:handleBallBoundary(ball, name)
         local vx, vy = ball.body:getLinearVelocity()
         local x, y = ball.body:getPosition()
         local fudge = 2 -- Position correction factor
+        local minVelocity = 50
 
         if name == "top" then
-            vy = -vy
             ball.body:setPosition(x, y + fudge)
+            vy = -vy
         elseif name == "left" then
+            ball.body:setPosition(x + fudge, y)
             vx = -vx
-            ball.body:setPosition(x + 2, y)
         elseif name == "right" then
+            ball.body:setPosition(x - fudge, y)
             vx = -vx
-            ball.body:setPosition(x - 2, y)
+        end
+
+        -- Clamp velocities so they never go near zero
+        if math.abs(vx) < minVelocity then
+            vx = (vx < 0) and -minVelocity or minVelocity
+        end
+        if math.abs(vy) < minVelocity then
+            vy = (vy < 0) and -minVelocity or minVelocity
         end
 
         ball:setVelocity(vx, vy)
     end)
 end
 
-function collider:beginContact(a, b)
+function collider:beginContact(a, b, coll)
     local ua, ub = a:getUserData(), b:getUserData()
     if not ua or not ub then return end
 
@@ -55,7 +76,8 @@ function collider:beginContact(a, b)
     elseif pair == "ball-brick" or pair == "brick-ball" then
         self:handleBallBrick(
             ua.type == "ball" and ua.obj or ub.obj,
-            ua.type == "brick" and ua.obj or ub.obj
+            ua.type == "brick" and ua.obj or ub.obj,
+            coll
         )
     elseif pair == "ball-boundary" or pair == "boundary-ball" then
         self:handleBallBoundary(

@@ -8,4 +8,10 @@ function vector.normalize(x, y)
     return x / length, y / length
 end
 
+function vector.reflect(vx, vy, nx, ny)
+    -- Reflect vector (vx, vy) around normal (nx, ny)
+    local dot = vx * nx + vy * ny
+    return vx - 2 * dot * nx, vy - 2 * dot * ny
+end
+
 return vector

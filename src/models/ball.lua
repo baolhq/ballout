@@ -30,7 +30,7 @@ end
 
 function ball:setVelocity(vx, vy)
     local nx, ny = vector.normalize(vx, vy)
-    self.body:setLinearVelocity(nx * ball.speed, ny * ball.speed)
+    self.body:setLinearVelocity(nx * self.speed, ny * self.speed)
 end
 
 function ball:draw()
