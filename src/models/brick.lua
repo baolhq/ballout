@@ -1,12 +1,13 @@
 local colors = require("src/consts/colors")
 
 local brick = {
-    width = 60,
-    height = 20,
-    shouldRemove = false,
+    width = 60,           -- Default width
+    height = 20,          -- Default height
+    shouldRemove = false, -- Boolean flag for pending removal
 }
 
-function brick.init(world, x, y)
+-- Initialize brick position and body
+function brick.new(world, x, y)
     local b = {}
 
     b.width = brick.width
@@ -19,6 +20,8 @@ function brick.init(world, x, y)
     return b
 end
 
+
+-- Draw brick to screen
 function brick.draw(b)
     love.graphics.setColor(colors.BRICK)
     local x, y = b.body:getPosition()

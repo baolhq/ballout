@@ -11,6 +11,7 @@ local ball = {
     fixture = {},
 }
 
+-- Initialize ball position, body and angle
 function ball:init(world)
     local screenW, screenH = love.graphics.getDimensions()
     local x = (screenW - self.width) / 2 + self.width / 2
@@ -19,7 +20,10 @@ function ball:init(world)
     self.body = love.physics.newBody(world, x, y, "dynamic")
     self.shape = love.physics.newCircleShape(self.radius)
     self.fixture = love.physics.newFixture(self.body, self.shape)
+    self.fixture:setRestitution(1.0)
+    self.fixture:setFriction(0)
     self.fixture:setUserData({ type = "ball", obj = self })
+
 
     -- Setup initial fall angle
     local angle = math.rad(love.math.random(45, 135))
@@ -28,11 +32,25 @@ function ball:init(world)
     self:setVelocity(vx, vy)
 end
 
+-- Set ball velocity to be normalized at constant speed
 function ball:setVelocity(vx, vy)
     local nx, ny = vector.normalize(vx, vy)
     self.body:setLinearVelocity(nx * self.speed, ny * self.speed)
 end
 
+-- Update ball velocity and position
+function ball:update(dt)
+    local vx, vy = self.body:getLinearVelocity()
+    local currentSpeed = math.sqrt(vx * vx + vy * vy)
+
+    -- Always force ball to be constant speed
+    if currentSpeed ~= 0 then
+        local scale = self.speed / currentSpeed
+        self:setVelocity(vx * scale, vy * scale)
+    end
+end
+
+-- Draw ball to screen
 function ball:draw()
     love.graphics.setColor(colors.BALL)
     local x, y = self.body:getPosition()
