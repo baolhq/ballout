@@ -6,11 +6,11 @@ local drawer = {
     fontCache = {}
 }
 
-function drawer:drawCenteredText(text, font, yOffset)
+function drawer:drawCenteredText(text, font, xOffset, yOffset)
     local textW = font:getWidth(text)
     local textH = font:getHeight(text)
 
-    local x = (self.screenW - textW) / 2
+    local x = (self.screenW - textW) / 2 + xOffset
     local y = (self.screenH - textH) / 2 + yOffset
 
     love.graphics.print(text, x, y)

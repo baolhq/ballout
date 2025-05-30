@@ -1,4 +1,5 @@
 local colors = require("src/consts/colors")
+local res = require("src/consts/res")
 local vector = require("src/utils/vector")
 
 local ball = {
@@ -26,7 +27,7 @@ function ball:init(world)
     self.fixture:setUserData({ type = "ball", obj = self })
 
     -- Load ball sprite
-    self.sprite = love.graphics.newImage("res/img/ball.png")
+    self.sprite = love.graphics.newImage(res.BALL_SPR)
     self.sprite:setFilter("linear", "linear", 64)
 
     -- Setup initial angle

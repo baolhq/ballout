@@ -1,5 +1,6 @@
-local consts = require("src/consts/consts")
 local colors = require("src/consts/colors")
+local consts = require("src/consts/consts")
+local res = require("src/consts/res")
 
 local paddle = {
     width = 200,
@@ -23,7 +24,7 @@ function paddle:init(world)
     self.fixture:setUserData({ type = "paddle", obj = self })
 
     -- Load paddle sprite
-    self.sprite = love.graphics.newImage("res/img/paddle.png")
+    self.sprite = love.graphics.newImage(res.PADDLE_SPR)
 end
 
 -- Move the paddle with provided horizontal direction from `-1` to `1` <br/>

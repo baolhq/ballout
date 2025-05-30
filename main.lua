@@ -1,5 +1,6 @@
-local sceneManager = require("src/managers/scene_manager")
 local consts = require("src/consts/consts")
+local res = require("src/consts/res")
+local sceneManager = require("src/managers/scene_manager")
 
 --#region Debugger setup
 
@@ -25,11 +26,12 @@ local assets = {}
 
 function love.load()
     love.window.setTitle(consts.GAME_TITLE)
-    local gameIcon = love.image.newImageData("res/img/icon.png")
+    local gameIcon = love.image.newImageData(res.GAME_ICON)
     love.window.setIcon(gameIcon)
+    love.graphics.setDefaultFilter("nearest", "nearest")
 
-    assets.bgSound = love.audio.newSource("res/audio/background.ogg", "stream")
-    assets.blipSound = love.audio.newSource("res/audio/blip.wav", "static")
+    assets.bgSound = love.audio.newSource(res.BG_SOUND, "stream")
+    assets.blipSound = love.audio.newSource(res.BLIP_SOUND, "static")
     assets.bgSound:setLooping(true)
     assets.blipSound:setVolume(0.5)
 

@@ -50,7 +50,7 @@ function lboardScene:draw()
     love.graphics.clear(colors.SLATE_100)
 
     local font = drawer:getFont(consts.MAIN_FONT, consts.FONT_TITLE_SIZE)
-    drawer:drawCenteredText("LEADERBOARD", font, -84)
+    drawer:drawCenteredText("LEADERBOARD", font, 0, -84)
 
     font = drawer:getFont(consts.MAIN_FONT, consts.FONT_SUB_SIZE)
     for i = 1, 5 do
@@ -58,7 +58,7 @@ function lboardScene:draw()
         local text =
             "???????? " .. string.rep(".", 80) ..
             " " .. string.format("%08d", score)
-        drawer:drawCenteredText(text, font, i * 28 - 48)
+        drawer:drawCenteredText(text, font, 0, i * 28 - 48)
     end
 
     drawer:drawButton(backBtn, font)

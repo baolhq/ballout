@@ -82,7 +82,7 @@ function titleScene:draw()
     love.graphics.clear(colors.SLATE_100)
 
     local font = drawer:getFont(consts.MAIN_FONT, consts.FONT_TITLE_SIZE)
-    drawer:drawCenteredText("BALLOUT", font, -68)
+    drawer:drawCenteredText("BALLOUT", font, 0, -68)
 
     font = drawer:getFont(consts.MAIN_FONT, consts.FONT_SUB_SIZE)
     drawer:drawButton(startBtn, font)
