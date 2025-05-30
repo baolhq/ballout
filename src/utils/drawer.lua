@@ -19,9 +19,9 @@ end
 function drawer:drawButton(btn, font)
     -- Hover effect
     if btn.hovered then
-        love.graphics.setColor(colors.BTN_HIGHLIGHT)
+        love.graphics.setColor(colors.SLATE_400)
     else
-        love.graphics.setColor(colors.BTN)
+        love.graphics.setColor(colors.SLATE_200)
     end
 
     -- Button rectangle
@@ -29,7 +29,7 @@ function drawer:drawButton(btn, font)
 
     -- Button outline on focused
     if btn.focused then
-        love.graphics.setColor(colors.BTN_HIGHLIGHT)
+        love.graphics.setColor(colors.SLATE_400)
         love.graphics.setLineWidth(1)
         love.graphics.rectangle("line", btn.x, btn.y, btn.width, btn.height, 4, 4)
     end

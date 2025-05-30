@@ -1,4 +1,4 @@
-local screenManager = require("src/managers/screen_manager")
+local sceneManager = require("src/managers/scene_manager")
 local consts = require("src/consts/consts")
 
 --#region Debugger setup
@@ -33,21 +33,21 @@ function love.load()
     assets.bgSound:setLooping(true)
     assets.blipSound:setVolume(0.5)
 
-    screenManager:switch("title", assets)
+    sceneManager:switch("title", assets)
 end
 
 function love.keypressed(key)
-    screenManager:keypressed(key)
+    sceneManager:keypressed(key)
 end
 
 function love.mousepressed(x, y, btn)
-    screenManager:mousepressed(x, y, btn)
+    sceneManager:mousepressed(x, y, btn)
 end
 
 function love.update(dt)
-    screenManager:update(dt)
+    sceneManager:update(dt)
 end
 
 function love.draw()
-    screenManager:draw()
+    sceneManager:draw()
 end

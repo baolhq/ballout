@@ -27,7 +27,7 @@ function paddle:init(world)
 end
 
 -- Move the paddle with provided horizontal direction from `-1` to `1` <br/>
--- Clamp it position into screen boundaries
+-- Clamp it position into scene boundaries
 function paddle:move(direction)
     local vx = 0
 
@@ -37,7 +37,7 @@ function paddle:move(direction)
 
     self.body:setLinearVelocity(vx, 0)
 
-    -- Clamp to screen boundaries
+    -- Clamp to scene boundaries
     local x, y = self.body:getPosition()
     local halfWidth = self.width / 2
 
@@ -54,7 +54,7 @@ end
 
 -- Draw the paddle
 function paddle:draw()
-    love.graphics.setColor(colors.PADDLE)
+    love.graphics.setColor(colors.SLATE_600)
 
     local x, y = self.body:getPosition()
     local originX = self.width / 2

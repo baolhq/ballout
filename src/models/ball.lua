@@ -23,7 +23,6 @@ function ball:init(world)
     self.shape = love.physics.newCircleShape(self.radius)
     self.fixture = love.physics.newFixture(self.body, self.shape)
     self.fixture:setRestitution(1.0)
-    self.fixture:setFriction(0)
     self.fixture:setUserData({ type = "ball", obj = self })
 
     -- Load ball sprite
@@ -47,6 +46,12 @@ end
 function ball:update(dt)
     local vx, vy = self.body:getLinearVelocity()
     local currentSpeed = math.sqrt(vx * vx + vy * vy)
+    local minVy = 200
+
+    -- Prevent infinite horizontal bouncing
+    if math.abs(vy) < minVy then
+        vy = vy < 0 and -minVy or minVy
+    end
 
     -- Always force ball to be constant speed
     if currentSpeed ~= 0 then
@@ -55,9 +60,9 @@ function ball:update(dt)
     end
 end
 
--- Draw ball to screen
+-- Draw ball to scene
 function ball:draw()
-    love.graphics.setColor(colors.BALL)
+    love.graphics.setColor(colors.SLATE_800)
 
     local x, y = self.body:getPosition()
     local originX = self.width / 2  -- half of sprite width

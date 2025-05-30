@@ -1,9 +1,8 @@
 local colors = require("src/consts/colors")
 local consts = require("src/consts/consts")
-local file = require("src/utils/file")
 local drawer = require("src/utils/drawer")
 
-local lboardScreen = {
+local lboardScene = {
     assets = {},
     actions = {},
     highScores = {}
@@ -19,7 +18,7 @@ local backBtn = {
     hovered = false,
 }
 
-function lboardScreen:load(assets, actions)
+function lboardScene:load(assets, actions)
     self.assets = assets
     self.actions = actions
     -- self.highScores = file.loadScore()
@@ -28,27 +27,27 @@ function lboardScreen:load(assets, actions)
     backBtn.y = (love.graphics.getHeight() - backBtn.height) / 2 + 168
 end
 
-function lboardScreen:keypressed(key)
+function lboardScene:keypressed(key)
     if key == "return" or key == "escape" then
-        self.actions.switchScreen("title")
+        self.actions.switchScene("title")
     end
 end
 
-function lboardScreen:mousepressed(x, y, btn)
+function lboardScene:mousepressed(x, y, btn)
     if btn == 1 and backBtn.hovered then
-        self.actions.switchScreen("title")
+        self.actions.switchScene("title")
     end
 end
 
-function lboardScreen:update(dt)
+function lboardScene:update(dt)
     local mx, my = love.mouse.getPosition()
     backBtn.hovered =
         mx > backBtn.x and mx < backBtn.x + backBtn.width and
         my > backBtn.y and my < backBtn.y + backBtn.height
 end
 
-function lboardScreen:draw()
-    love.graphics.clear(colors.BG)
+function lboardScene:draw()
+    love.graphics.clear(colors.SLATE_100)
 
     local font = drawer:getFont(consts.MAIN_FONT, consts.FONT_TITLE_SIZE)
     drawer:drawCenteredText("LEADERBOARD", font, -84)
@@ -65,4 +64,4 @@ function lboardScreen:draw()
     drawer:drawButton(backBtn, font)
 end
 
-return lboardScreen
+return lboardScene

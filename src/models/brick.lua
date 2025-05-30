@@ -22,9 +22,9 @@ function brick.new(world, x, y, sprite)
     return b
 end
 
--- Draw brick to screen
+-- Draw brick to scene
 function brick.draw(b)
-    love.graphics.setColor(colors.BRICK)
+    love.graphics.setColor(colors.SLATE_400)
 
     local x, y = b.body:getPosition()
     local originX = b.width / 2
