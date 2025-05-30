@@ -1,4 +1,4 @@
-local consts = require("src/consts/consts")
+local res = require("src/consts/res")
 
 local file = {}
 
@@ -16,20 +16,44 @@ function file.saveScores(scores)
     end
 
     local content = table.concat(lines, "\n")
-    love.filesystem.write(consts.SAVE_PATH, content)
+    love.filesystem.write(res.SAVE_PATH, content)
 end
 
 -- Load scores from save file
 function file.loadScores()
-    local res = {}
+    local scores = {}
 
-    if love.filesystem.getInfo(consts.SAVE_PATH) then
-        for line in love.filesystem.lines(consts.SAVE_PATH) do
-            table.insert(res, line)
+    if love.filesystem.getInfo(res.SAVE_PATH) then
+        for line in love.filesystem.lines(res.SAVE_PATH) do
+            table.insert(scores, line)
         end
     end
 
-    return res
+    return scores
+end
+
+-- Save game configurations
+function file.saveConfigs(configs)
+    local lines = {}
+    for k, v in configs do
+        table.insert(lines, k .. "=" .. v)
+    end
+
+    local content = table.concat(lines, "\n")
+    love.filesystem.write(res.CONFIG_PATH, content)
+end
+
+-- Load game configurations
+function file.loadConfigs()
+    local configs = {}
+
+    if love.filesystem.getInfo(res.CONFIG_PATH) then
+        for line in love.filesystem.lines(res.CONFIG_PATH) do
+            print(line)
+        end
+    end
+
+    return configs
 end
 
 return file

@@ -153,7 +153,7 @@ function mainScene:draw()
 
     -- Draw score
     love.graphics.setColor(colors.SLATE_300)
-    local scoreFont = drawer:getFont(consts.MAIN_FONT, consts.FONT_HEADER_SIZE)
+    local scoreFont = drawer:getFont(res.MAIN_FONT, consts.FONT_HEADER_SIZE)
     drawer:drawCenteredText(self.score, scoreFont, 0, 0)
 
     -- Draw ball and paddle
@@ -173,11 +173,11 @@ function mainScene:draw()
         love.graphics.rectangle("fill", 0, bgY, consts.WINDOW_WIDTH, bgHeight)
 
         love.graphics.setColor(colors.SLATE_100)
-        local font = drawer:getFont(consts.MAIN_FONT, consts.FONT_HEADER_SIZE)
+        local font = drawer:getFont(res.MAIN_FONT, consts.FONT_HEADER_SIZE)
         drawer:drawCenteredText("GAME OVER", font, 0, -18)
 
         love.graphics.setColor(colors.SLATE_300)
-        font = drawer:getFont(consts.MAIN_FONT, consts.FONT_SUB_SIZE)
+        font = drawer:getFont(res.MAIN_FONT, consts.FONT_SUB_SIZE)
         drawer:drawCenteredText("YOUR SCORE: " .. self.score, font, 0, 24)
 
         drawer:drawCenteredText("PRESS <ENTER> TO RESTART", font, 0, 48)

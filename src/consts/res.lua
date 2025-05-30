@@ -5,6 +5,9 @@ local res = {
     BALL_SPR = "res/img/ball.png",
     PADDLE_SPR = "res/img/paddle.png",
     BRICK_SPR = "res/img/brick.png",
+    MAIN_FONT = "res/fonts/Valorant.ttf",
+    SAVE_PATH = "highscore.txt",
+    CONFIG_PATH = "ballout.conf",
 }
 
 return res

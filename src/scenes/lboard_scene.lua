@@ -1,5 +1,6 @@
 local colors = require("src/consts/colors")
 local consts = require("src/consts/consts")
+local res = require("src/consts/res")
 local drawer = require("src/utils/drawer")
 
 local lboardScene = {
@@ -49,16 +50,16 @@ end
 function lboardScene:draw()
     love.graphics.clear(colors.SLATE_100)
 
-    local font = drawer:getFont(consts.MAIN_FONT, consts.FONT_TITLE_SIZE)
-    drawer:drawCenteredText("LEADERBOARD", font, 0, -84)
+    local font = drawer:getFont(res.MAIN_FONT, consts.FONT_TITLE_SIZE)
+    drawer:drawCenteredText("LEADERBOARD", font, 0, -68)
 
-    font = drawer:getFont(consts.MAIN_FONT, consts.FONT_SUB_SIZE)
+    font = drawer:getFont(res.MAIN_FONT, consts.FONT_SUB_SIZE)
     for i = 1, 5 do
         local score = self.highScores[i] or 0
         local text =
             "???????? " .. string.rep(".", 80) ..
             " " .. string.format("%08d", score)
-        drawer:drawCenteredText(text, font, 0, i * 28 - 48)
+        drawer:drawCenteredText(text, font, 0, i * 28 - 28)
     end
 
     drawer:drawButton(backBtn, font)
