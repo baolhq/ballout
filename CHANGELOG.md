@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.0
+
+- First major release 🥳
+- Polished UI system
+- Proper sound effects
+- Refactoring resource strings to a global constant file
+- Added setting scene and persistent configurations
+- Added a simple `difficuty` option that changes ball speed
+- Minor adjustment to ball and paddle collision event to simulate the original game, if the ball hit the left side, it'll bounce more to the left and vice versa
+
 ## 0.0.2
 
 - Updated game sprites
