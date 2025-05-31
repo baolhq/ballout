@@ -124,7 +124,7 @@ function mainScene:keypressed(key)
         self.actions.switchScene("title")
     elseif key == "return" and self.isGameOver then
         self:unload()
-        self:load(self.assets, self.actions)
+        self:load(self.actions, self.assets, self.configs)
     end
 end
 

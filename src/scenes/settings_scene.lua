@@ -10,6 +10,8 @@ local settingsScreen = {
     configs = {},
 }
 
+local focusedIndex = 1
+local buttonOrder = { "music", "difficulty", "back" }
 local buttons = {
     music = {
         x = 0,
@@ -70,9 +72,52 @@ function settingsScreen:load(actions, assets, configs)
     end
 end
 
+local function updateMusicBtn(btn, cfg)
+    btn.state = not btn.state
+    btn.text = "Music: " .. (btn.state and "ON" or "OFF")
+    cfg.music = btn.state
+    file.saveConfigs(cfg)
+end
+
+local function udpateDiffBtn(btn, cfg)
+    btn.index = btn.index % #btn.options + 1
+    btn.text = "Difficulty: " .. btn.options[btn.index]
+    cfg.diff = btn.index
+    file.saveConfigs(cfg)
+end
+
 function settingsScreen:keypressed(key)
     if key == "escape" then
         self.actions.switchScene("title")
+        self.assets.clickSound:play()
+    end
+
+    if key == "return" then
+        if buttons.music.focused then
+            updateMusicBtn(buttons.music, self.configs)
+        elseif buttons.difficulty.focused then
+            udpateDiffBtn(buttons.difficulty, self.configs)
+        else
+            self.actions.switchScene("title")
+        end
+        self.assets.clickSound:play()
+    end
+
+    -- Cycling through button focuses
+    if key == "tab" or key == "up" or key == "down" then
+        -- Remove old focuses
+        for _, btn in pairs(buttons) do
+            btn.focused = false
+        end
+
+        if key == "up" then
+            focusedIndex = (focusedIndex - 2) % #buttonOrder + 1
+        else
+            focusedIndex = focusedIndex % #buttonOrder + 1
+        end
+
+        buttons[buttonOrder[focusedIndex]].focused = true
+        self.assets.clickSound:play()
     end
 end
 
@@ -83,17 +128,9 @@ function settingsScreen:mousepressed(x, y, btn)
     for name, b in pairs(buttons) do
         if b.hovered then
             if name == "music" and b.toggle then
-                b.state = not b.state
-                b.text = "Music: " .. (b.state and "ON" or "OFF")
-
-                self.configs.music = b.state
-                file.saveConfigs(self.configs)
+                updateMusicBtn(b, self.configs)
             elseif name == "difficulty" and b.options then
-                b.index = b.index % #b.options + 1
-                b.text = "Difficulty: " .. b.options[b.index]
-
-                self.configs.diff = b.index
-                file.saveConfigs(self.configs)
+                udpateDiffBtn(b, self.configs)
             elseif name == "back" then
                 self.actions.switchScene("title")
             end

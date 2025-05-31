@@ -66,10 +66,10 @@ function titleScene:keypressed(key)
         else
             self.actions.switchScene("settings")
         end
-        return
+        self.assets.clickSound:play()
     end
 
-    -- Cycling button focuses
+    -- Cycling through button focuses
     if key == "tab" or key == "up" or key == "down" then
         -- Remove old focuses
         for _, btn in pairs(buttons) do
@@ -77,14 +77,13 @@ function titleScene:keypressed(key)
         end
 
         if key == "up" then
-            -- Movind upwards
             focusedIndex = (focusedIndex - 2) % #buttonOrder + 1
         else
-            -- Moving downwards
             focusedIndex = focusedIndex % #buttonOrder + 1
         end
 
         buttons[buttonOrder[focusedIndex]].focused = true
+        self.assets.clickSound:play()
     end
 end
 
