@@ -1,10 +1,20 @@
 local collider = {
-    queued = {},  -- Queued callback events
+    queued = {}, -- Queued callback events
     scene = nil, -- Reference to main screen
+    blipSound = nil,
+    shouldPlaySound = true,
 }
 
 function collider:setScene(scene)
     self.scene = scene
+end
+
+function collider:setBlipSound(sound)
+    self.blipSound = sound
+end
+
+function collider:setMuted(muted)
+    self.muted = muted
 end
 
 -- Handling ball colliding with brick, destroy brick and
@@ -19,6 +29,8 @@ function collider:handleBallBrick(ball, brick)
             ball.speed = ball.speed + 20
             self.scene.score = self.scene.score + 1
         end
+
+        if self.shouldPlaySound then self.blipSound:play() end
     end)
 end
 
@@ -27,7 +39,7 @@ end
 function collider:handleBallPaddle(ball, paddle, coll)
     table.insert(self.queued, function()
         local bvx, bvy = ball.body:getLinearVelocity()
-        local px, _ = paddle.body:getPosition()
+        local px, py = paddle.body:getPosition()
         local x1, _ = coll:getPositions()
         local adjust = 200
 
@@ -36,7 +48,10 @@ function collider:handleBallPaddle(ball, paddle, coll)
         else
             bvx = bvx + adjust
         end
+
         ball:setVelocity(bvx, bvy)
+
+        if self.shouldPlaySound then self.blipSound:play() end
     end)
 end
 

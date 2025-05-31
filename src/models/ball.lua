@@ -21,10 +21,12 @@ function ball:init(world)
     local y = screenH / 2 - self.height / 2
 
     self.body = love.physics.newBody(world, x, y, "dynamic")
+    self.body:setBullet(true)
     self.shape = love.physics.newCircleShape(self.radius)
     self.fixture = love.physics.newFixture(self.body, self.shape)
-    self.fixture:setRestitution(1.0)
     self.fixture:setUserData({ type = "ball", obj = self })
+    self.fixture:setRestitution(1.0)
+    self.fixture:setFriction(0)
 
     -- Load ball sprite
     self.sprite = love.graphics.newImage(res.BALL_SPR)
@@ -35,6 +37,18 @@ function ball:init(world)
     local vx = math.cos(angle)
     local vy = math.sin(angle)
     self:setVelocity(vx, vy)
+end
+
+---Change game difficulty by increase or decrease ball speed
+---@param diff number Can be 1, 2 or 3 for "Easy", "Normal" and "Hard"
+function ball:changeDifficulty(diff)
+    if diff == 1 then
+        self.speed = 200
+    elseif diff == 3 then
+        self.speed = 600
+    else
+        self.speed = 400
+    end
 end
 
 -- Set ball velocity to be normalized at constant speed

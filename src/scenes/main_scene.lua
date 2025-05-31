@@ -11,6 +11,7 @@ local paddle    = require("src/models/paddle")
 local mainScene = {
     assets = {},
     actions = {},
+    configs = {},
     world = {},
     bricks = {},
     boundaries = {},
@@ -35,22 +36,34 @@ function mainScene:initBoundaries()
 end
 
 -- Initialize main scene, load resources and setup physics
-function mainScene:load(assets, actions)
-    self.assets = assets
+function mainScene:load(actions, assets, configs)
     self.actions = actions
+    self.assets = assets
+    self.configs = configs
+
     self.score = 0
     self.isGameOver = false
     self.world = love.physics.newWorld(0, 0, true)
 
-    -- Set collision handlers and reference
+    -- Set collision handlers and references
+    collider:setBlipSound(self.assets.blipSound)
+    if self.configs.music ~= nil then
+        collider.shouldPlaySound = self.configs.music
+    end
+
     collider:setScene(self)
     self.world:setCallbacks(function(a, b, coll)
         collider:beginContact(a, b, coll)
     end, function() end)
 
+    -- Initialize game objects
     self:initBoundaries()
     paddle:init(self.world)
     ball:init(self.world)
+
+    if self.configs.diff then
+        ball:changeDifficulty(self.configs.diff)
+    end
 
     -- Load brick sprites here to reduce loads
     local brickSprite = love.graphics.newImage(res.BRICK_SPR)
@@ -71,10 +84,16 @@ function mainScene:load(assets, actions)
             table.insert(self.bricks, b)
         end
     end
+
+    if configs.music ~= false then
+        self.assets.bgSound:play()
+    end
 end
 
 -- Unload game resources
 function mainScene:unload()
+    self.assets.bgSound:stop()
+
     if paddle.destroy then paddle:destroy() end
     if ball.destroy then ball:destroy() end
 
@@ -111,6 +130,7 @@ end
 
 -- Handling game over logics
 function mainScene:gameOver()
+    self.assets.bgSound:stop()
     self.isGameOver = true
 end
 

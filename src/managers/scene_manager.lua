@@ -9,21 +9,21 @@ local scenes = {
     settings = require("src/scenes/settings_scene")
 }
 
-function sceneManager:switch(name, assets)
+function sceneManager:switch(name, assets, configs)
     if scenes[name] then
         self.current = name
         if scenes[self.current].load then
             -- Callback actions from child scene
             local actions = {
                 switchScene = function(newscene)
-                    self:switch(newscene, assets)
+                    self:switch(newscene, assets, configs)
                 end,
                 quit = function()
                     love.event.quit()
                 end
             }
 
-            scenes[self.current]:load(assets, actions)
+            scenes[self.current]:load(actions, assets, configs)
         end
     else
         error("Scene " .. name .. " not found.")

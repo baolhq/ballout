@@ -6,6 +6,7 @@ local drawer = require("src/utils/drawer")
 local titleScene = {
     assets = {},
     actions = {},
+    configs = {},
 }
 
 local focusedIndex = 1
@@ -40,9 +41,10 @@ local buttons = {
     }
 }
 
-function titleScene:load(assets, actions)
-    self.assets = assets
+function titleScene:load(actions, assets, configs)
     self.actions = actions
+    self.assets = assets
+    self.configs = configs
 
     local spacingY = 48
     buttons.start.x = (love.graphics.getWidth() - buttons.start.width) / 2
@@ -87,19 +89,18 @@ function titleScene:keypressed(key)
 end
 
 function titleScene:mousepressed(x, y, btn)
+    self.assets.clickSound:play()
+    for _, b in pairs(buttons) do
+        b.focused = false
+    end
+
     if btn == 1 and buttons.start.hovered then
         buttons.start.focused = true
-        buttons.lboard.focused = false
-        buttons.settings.focused = false
         self.actions.switchScene("main")
     elseif btn == 1 and buttons.lboard.hovered then
-        buttons.start.focused = false
         buttons.lboard.focused = true
-        buttons.settings.focused = false
         self.actions.switchScene("leaderboard")
     elseif btn == 1 and buttons.settings.hovered then
-        buttons.start.focused = false
-        buttons.lboard.focused = false
         buttons.settings.focused = true
         self.actions.switchScene("settings")
     end

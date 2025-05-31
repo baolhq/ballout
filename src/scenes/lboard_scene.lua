@@ -6,7 +6,8 @@ local drawer = require("src/utils/drawer")
 local lboardScene = {
     assets = {},
     actions = {},
-    highScores = {}
+    configs = {},
+    highScores = {},
 }
 
 local backBtn = {
@@ -19,9 +20,10 @@ local backBtn = {
     hovered = false,
 }
 
-function lboardScene:load(assets, actions)
-    self.assets = assets
+function lboardScene:load(actions, assets, configs)
     self.actions = actions
+    self.assets = assets
+    self.configs = configs
     -- self.highScores = file.loadScore()
 
     backBtn.x = (love.graphics.getWidth() - backBtn.width) / 2
@@ -36,6 +38,7 @@ end
 
 function lboardScene:mousepressed(x, y, btn)
     if btn == 1 and backBtn.hovered then
+        self.assets.clickSound:play()
         self.actions.switchScene("title")
     end
 end

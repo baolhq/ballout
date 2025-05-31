@@ -35,8 +35,8 @@ end
 -- Save game configurations
 function file.saveConfigs(configs)
     local lines = {}
-    for k, v in configs do
-        table.insert(lines, k .. "=" .. v)
+    for k, v in pairs(configs) do
+        table.insert(lines, k .. "=" .. tostring(v))
     end
 
     local content = table.concat(lines, "\n")
@@ -49,7 +49,9 @@ function file.loadConfigs()
 
     if love.filesystem.getInfo(res.CONFIG_PATH) then
         for line in love.filesystem.lines(res.CONFIG_PATH) do
-            print(line)
+            -- Split each config by the `=` sign
+            local k, v = line:match("([^=]+)=([^=]+)")
+            configs[k] = v
         end
     end
 
