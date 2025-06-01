@@ -1,6 +1,7 @@
 local colors = require("src/consts/colors")
 local consts = require("src/consts/consts")
 local res = require("src/consts/res")
+local file = require("src/utils/file")
 local drawer = require("src/utils/drawer")
 
 local lboardScene = {
@@ -24,7 +25,7 @@ function lboardScene:load(actions, assets, configs)
     self.actions = actions
     self.assets = assets
     self.configs = configs
-    -- self.highScores = file.loadScore()
+    self.highScores = file.loadScores()
 
     backBtn.x = (love.graphics.getWidth() - backBtn.width) / 2
     backBtn.y = (love.graphics.getHeight() - backBtn.height) / 2 + 168

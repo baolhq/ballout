@@ -3,6 +3,7 @@ local consts    = require("src/consts/consts")
 local res       = require("src/consts/res")
 local collider  = require("src/utils/collider")
 local drawer    = require("src/utils/drawer")
+local file      = require("src/utils/file")
 
 local ball      = require("src/models/ball")
 local brick     = require("src/models/brick")
@@ -15,7 +16,10 @@ local mainScene = {
     world = {},
     bricks = {},
     boundaries = {},
+    highScores = {},
     score = 0,
+    scoreSaved = false, -- Prevent saving multiple times
+    isPaused = false,
     isGameOver = false,
 }
 
@@ -42,6 +46,8 @@ function mainScene:load(actions, assets, configs)
     self.configs = configs
 
     self.score = 0
+    self.highScores = file.loadScores()
+    self.scoreSaved = false
     self.isGameOver = false
     self.world = love.physics.newWorld(0, 0, true)
 
@@ -122,6 +128,8 @@ function mainScene:keypressed(key)
     if key == "escape" then
         self:unload()
         self.actions.switchScene("title")
+    elseif key == "space" then
+        self.isPaused = not self.isPaused
     elseif key == "return" and self.isGameOver then
         self:unload()
         self:load(self.actions, self.assets, self.configs)
@@ -131,13 +139,28 @@ end
 -- Handling game over logics
 function mainScene:gameOver()
     self.assets.bgSound:stop()
+    self.isPaused = false
     self.isGameOver = true
+
+    -- Save new highscore
+    if not self.scoreSaved then
+        table.insert(self.highScores, self.score)
+        table.sort(self.highScores, function(a, b)
+            return a > b
+        end)
+
+        while #self.highScores > 5 do
+            table.remove(self.highScores)
+        end
+        file.saveScores(self.highScores)
+        self.scoreSaved = true
+    end
 end
 
 -- Update scene states, ball velocity and paddle movements
 function mainScene:update(dt)
-    -- Stop physics update on game over
-    if not self.isGameOver then self.world:update(dt) end
+    -- Stop physics update on game over or paused
+    if not (self.isGameOver or self.isPaused) then self.world:update(dt) end
 
     -- Moves with arrow keys being held
     local direction = 0
@@ -167,6 +190,26 @@ function mainScene:update(dt)
     end
 end
 
+---Draw main scene overlays
+---@param bgHeight number
+---@param headerText string
+---@param subTexts table
+local function drawOverlay(bgHeight, headerText, subTexts)
+    love.graphics.setColor(colors.SLATE_800)
+    local bgY = (love.graphics.getHeight() - bgHeight) / 2
+    love.graphics.rectangle("fill", 0, bgY, consts.WINDOW_WIDTH, bgHeight)
+
+    local headerFont = drawer:getFont(res.MAIN_FONT, consts.FONT_HEADER_SIZE)
+    love.graphics.setColor(colors.SLATE_100)
+    drawer:drawCenteredText(headerText, headerFont, 0, subTexts[1].y - 30)
+
+    local subFont = drawer:getFont(res.MAIN_FONT, consts.FONT_SUB_SIZE)
+    love.graphics.setColor(colors.SLATE_300)
+    for _, textInfo in ipairs(subTexts) do
+        drawer:drawCenteredText(textInfo.text, subFont, 0, textInfo.y)
+    end
+end
+
 -- Draw main scene with inlay score in the background
 function mainScene:draw()
     love.graphics.clear(colors.SLATE_100)
@@ -185,22 +228,19 @@ function mainScene:draw()
         brick.draw(v)
     end
 
+    -- Draw paused indicator
+    if self.isPaused then
+        drawOverlay(140, "PAUSED", {
+            { text = "PRESS <SPACE> TO RESUME", y = 28 },
+        })
+    end
+
     -- Draw game over text and score
     if self.isGameOver then
-        love.graphics.setColor(colors.SLATE_800)
-        local bgHeight = 140
-        local bgY = (love.graphics.getHeight() - bgHeight) / 2
-        love.graphics.rectangle("fill", 0, bgY, consts.WINDOW_WIDTH, bgHeight)
-
-        love.graphics.setColor(colors.SLATE_100)
-        local font = drawer:getFont(res.MAIN_FONT, consts.FONT_HEADER_SIZE)
-        drawer:drawCenteredText("GAME OVER", font, 0, -18)
-
-        love.graphics.setColor(colors.SLATE_300)
-        font = drawer:getFont(res.MAIN_FONT, consts.FONT_SUB_SIZE)
-        drawer:drawCenteredText("YOUR SCORE: " .. self.score, font, 0, 24)
-
-        drawer:drawCenteredText("PRESS <ENTER> TO RESTART", font, 0, 48)
+        drawOverlay(140, "GAME OVER", {
+            { text = "YOUR SCORE: " .. self.score, y = 24 },
+            { text = "PRESS <ENTER> TO RESTART",   y = 48 },
+        })
     end
 end
 

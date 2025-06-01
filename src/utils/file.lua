@@ -25,7 +25,7 @@ function file.loadScores()
 
     if love.filesystem.getInfo(res.SAVE_PATH) then
         for line in love.filesystem.lines(res.SAVE_PATH) do
-            table.insert(scores, line)
+            table.insert(scores, tonumber(line))
         end
     end
 

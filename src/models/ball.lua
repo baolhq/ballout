@@ -3,14 +3,16 @@ local res = require("src/consts/res")
 local vector = require("src/utils/vector")
 
 local ball = {
-    width = 24,
-    height = 24,
-    radius = 12,
-    speed = 0,
     sprite = {},
     body = {},
     shape = {},
     fixture = {},
+    width = 24,
+    height = 24,
+    radius = 12,
+    speed = 0,
+    maxSpeed = 800,
+    accel = 20,
 }
 
 -- Initialize ball position, body and angle
@@ -18,7 +20,7 @@ function ball:init(world)
     self.speed = 400
     local screenW, screenH = love.graphics.getDimensions()
     local x = (screenW - self.width) / 2 + self.width / 2
-    local y = screenH / 2 - self.height / 2
+    local y = screenH / 2 - self.height / 2 - 68
 
     self.body = love.physics.newBody(world, x, y, "dynamic")
     self.body:setBullet(true)

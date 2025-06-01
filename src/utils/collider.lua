@@ -26,7 +26,7 @@ function collider:handleBallBrick(ball, brick)
         brick.shouldRemove = true
 
         if self.scene then
-            ball.speed = ball.speed + 20
+            ball.speed = math.min(ball.speed + ball.accel, ball.maxSpeed)
             self.scene.score = self.scene.score + 1
         end
 
